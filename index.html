@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche de Chantier - AZ Marquage</title>
+    <style>
+        /* Couleurs inspirées d'AZ Marquage */
+        :root {
+            --primary-color: #004c8c; /* Bleu foncé */
+            --accent-color: #f7a500; /* Orange */
+            --background-color: #f4f4f4; /* Gris clair */
+            --white: #ffffff;
+            --text-color: #333333; /* Texte sombre pour lisibilité */
+        }
+
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: var(--background-color); 
+            color: var(--text-color);
+        }
+
+        h1, h2, h3 { 
+            color: var(--primary-color); 
+        }
+
+        form { 
+            margin-top: 20px; 
+            max-width: 600px; 
+            background-color: var(--white); 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input, select, button { 
+            width: 100%; 
+            padding: 8px; 
+            margin: 10px 0; 
+            border: 1px solid #ccc; 
+            border-radius: 4px;
+        }
+
+        button { 
+            cursor: pointer; 
+            background-color: var(--primary-color); 
+            color: var(--white); 
+            border: none; 
+        }
+
+        button:hover { 
+            background-color: var(--accent-color); 
+        }
+
+        #summaryContainer { 
+            margin-top: 30px; 
+            padding: 20px; 
+            background-color: var(--white); 
+            border-radius: 8px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #summaryContainer h2 { 
+            margin-bottom: 20px; 
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select, input[type="text"], input[type="date"], input[type="time"] {
+            font-size: 14px;
+        }
+        
+        .chore-group { 
+            margin-bottom: 20px; 
+        }
+        
+        #savedFilesContainer {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #savedFilesContainer h2 {
+            margin-bottom: 20px;
+        }
+        .file-separator {
+            border-top: 2px solid black;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Compléter la Fiche de Chantier</h1>
+
+<!-- Liste déroulante pour sélectionner l'employé -->
+<label for="employeeSelect">Sélectionner un employé :</label>
+<select id="employeeSelect">
+    <option value="">Choisir un employé</option>
+    <option value="Zehar">Zehar</option>
+    <option value="Bouchetit">Bouchetit</option>
+    <option value="Naguez">Naguez</option>
+    <option value="Otuk">Otuk</option>
+    <option value="Martins">Martins</option>
+    <option value="Moure">Moure</option>
+</select>
+
+<!-- Bouton pour aller à la fiche de chantier -->
+<button id="nextButton" style="display: none;">Suivant</button>
+
+<!-- Formulaire de la fiche de chantier (initialement caché) -->
+<form id="choreForm" style="display: none;">
+    <label for="date">Date :</label>
+    <input type="date" id="date" required>
+
+    <div id="choresContainer">
+        <div class="chore-group" id="chore1">
+            <label for="client1">Client :</label>
+            <input type="text" id="client1" placeholder="Nom du client" required>
+            
+            <label for="address1">Adresse du chantier :</label>
+            <input type="text" id="address1" placeholder="Adresse du chantier" required>
+
+            <label for="devis1">Devis (4 chiffres) :</label>
+            <input type="text" id="devis1" placeholder="Ex: 1234" required>
+
+            <label for="jobFinished1">Chantier terminé :</label>
+            <select id="jobFinished1" required>
+                <option value="Non">Non</option>
+                <option value="Oui">Oui</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Ajouter un chantier -->
+    <button type="button" id="addChoreButton">Ajouter un chantier</button>
+
+    <!-- Liste des seconds -->
+    <label for="secondSelect">Sélectionner un premier second :</label>
+    <select id="secondSelect" required>
+        <option value="">Choisir un second</option>
+        <option value="Faycal">Faycal</option>
+        <option value="Momo M">Momo M</option>
+        <option value="Atmane">Atmane</option>
+        <option value="Yassine">Yassine</option>
+        <option value="Bayram">Bayram</option>
+        <option value="Asslem">Asslem</option>
+        <option value="Autre">Autre</option>
+    </select>
+
+    <!-- Champ pour "Autre second" -->
+    <div id="otherSecondInput" style="display: none;">
+        <label for="otherSecond">Nom du second (autre) :</label>
+        <input type="text" id="otherSecond" placeholder="Nom du second">
+    </div>
+
+    <!-- Deuxième second séparé -->
+    <label for="second2">Deuxième second (facultatif) :</label>
+    <input type="text" id="second2" placeholder="Nom du deuxième second (si nécessaire)">
+
+    <!-- Horaires -->
+    <label for="arrivalTime">Heure d'arrivée :</label>
+    <input type="time" id="arrivalTime" required>
+
+    <label for="departureTime">Heure de départ/dépôt :</label>
+    <input type="time" id="departureTime" required>
+
+    <!-- Temps de pause -->
+    <label for="breakTime">Temps de pause :</label>
+    <input type="time" id="breakTime" value="00:20" required>
+
+    <!-- Générer PDF -->
+    <button type="submit">Générer la Fiche PDF</button>
+</form>
+
+<!-- Synthèse et bouton de téléchargement -->
+<div id="summaryContainer" style="display: none;">
+    <h2>Synthèse de la Fiche de Chantier</h2>
+    <div id="summaryDetails"></div>
+    <button id="downloadPDFButton" style="display: none;">Télécharger le PDF</button>
+</div>
+
+<div id="savedFilesContainer">
+    <h2>Fichiers enregistrés</h2>
+    <div id="savedFiles"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    let choreCount = 1;
+    const choresData = []; // Array to store all the chantiers
+    const savedFiles = []; // Array to store all saved files
+
+    // Affiche ou cache le formulaire de chantier en fonction de la sélection de l'employé
+    document.getElementById('employeeSelect').addEventListener('change', function() {
+        if (this.value) {
+            document.getElementById('nextButton').style.display = 'block';
+        } else {
+            document.getElementById('nextButton').style.display = 'none';
+        }
+    });
+
+    // Quand on clique sur "Suivant", afficher le formulaire de chantier
+    document.getElementById('nextButton').addEventListener('click', function() {
+        document.getElementById('choreForm').style.display = 'block';
+        // Ajouter la date actuelle par défaut
+        const today = new Date();
+        document.getElementById('date').value = today.toISOString().split('T')[0];
+    });
+
+    // Ajouter un chantier supplémentaire
+    document.getElementById('addChoreButton').addEventListener('click', function() {
+        choreCount++;
+        const newChore = document.createElement('div');
+        newChore.classList.add('chore-group');
+        newChore.id = `chore${choreCount}`;
+        newChore.innerHTML = `  
+            <label for="client${choreCount}">Client :</label>
+            <input type="text" id="client${choreCount}" placeholder="Nom du client" required>
+            <label for="address${choreCount}">Adresse du chantier :</label>
+            <input type="text" id="address${choreCount}" placeholder="Adresse du chantier" required>
+            <label for="devis${choreCount}">Devis (4 chiffres) :</label>
+            <input type="text" id="devis${choreCount}" placeholder="Ex: 1234" required>
+            <label for="jobFinished${choreCount}">Chantier terminé :</label>
+            <select id="jobFinished${choreCount}" required>
+                <option value="Non">Non</option>
+                <option value="Oui">Oui</option>
+            </select>
+        `;
+        document.getElementById('choresContainer').appendChild(newChore);
+    });
+
+    // Afficher ou masquer le champ "Nom du second" en fonction de la sélection
+    document.getElementById('secondSelect').addEventListener('change', function() {
+        document.getElementById('otherSecondInput').style.display = this.value === 'Autre' ? 'block' : 'none';
+    });
+
+    // Fonction pour générer la synthèse et afficher le résumé
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêche l'envoi du formulaire
+
+        const date = document.getElementById('date').value;
+        const employee = document.getElementById('employeeSelect').value;
+        const firstSecond = document.getElementById('secondSelect').value;
+        const otherSecond = document.getElementById('otherSecond').value;
+        const second2 = document.getElementById('second2').value; // Deuxième second
+        const arrivalTime = document.getElementById('arrivalTime').value;
+        const departureTime = document.getElementById('departureTime').value;
+        const breakTime = document.getElementById('breakTime').value; // Temps de pause
+
+        // Push data of the current chantier
+        const newChore = {
+            client: document.getElementById(`client${choreCount}`).value,
+            address: document.getElementById(`address${choreCount}`).value,
+            devis: document.getElementById(`devis${choreCount}`).value,
+            jobFinished: document.getElementById(`jobFinished${choreCount}`).value,
+        };
+
+        choresData.push(newChore); // Add the new chore to the data array
+
+        // Generate the summary for all chores
+        let summaryHTML = `
+            <p><strong>Employé:</strong> ${employee}</p>
+            <p><strong>Date:</strong> ${date}</p>
+            <h3>Chantiers :</h3>
+        `;
+
+        choresData.forEach((chore, index) => {
+            summaryHTML += `
+                <h4>Chantier ${index + 1}:</h4>
+                <ul>
+                    <li><strong>Client:</strong> ${chore.client}</li>
+                    <li><strong>Adresse:</strong> ${chore.address}</li>
+                    <li><strong>Devis:</strong> ${chore.devis}</li>
+                    <li><strong>Chantier terminé:</strong> ${chore.jobFinished}</li>
+                </ul>
+            `;
+        });
+
+        summaryHTML += `
+            <h3>Second :</h3>
+            <p>${firstSecond === 'Autre' ? otherSecond : firstSecond}</p>
+            <h3>Deuxième Second :</h3>
+            <p>${second2 ? second2 : 'Non précisé'}</p>
+            <p><strong>Heure d'arrivée:</strong> ${arrivalTime}</p>
+            <p><strong>Heure de départ:</strong> ${departureTime}</p>
+            <p><strong>Temps de pause:</strong> ${breakTime}</p>
+        `;
+
+        // Ajouter la synthèse aux fichiers enregistrés
+        savedFiles.push(summaryHTML);
+        updateSavedFiles();
+
+        // Réinitialiser le formulaire et revenir à la première page
+        resetForm();
+    });
+
+    // Fonction pour mettre à jour la liste des fichiers enregistrés
+    function updateSavedFiles() {
+        const savedFilesContainer = document.getElementById('savedFiles');
+        savedFilesContainer.innerHTML = '';
+        savedFiles.forEach((file, index) => {
+            const fileDiv = document.createElement('div');
+            fileDiv.innerHTML = `
+                <div class="file-separator"></div>
+                <h4>Fichier ${index + 1}</h4>
+                ${file}
+            `;
+            savedFilesContainer.appendChild(fileDiv);
+        });
+    }
+
+    // Fonction pour réinitialiser le formulaire et revenir à la première page
+    function resetForm() {
+        document.getElementById('choreForm').reset();
+        document.getElementById('choreForm').style.display = 'none';
+        document.getElementById('nextButton').style.display = 'none';
+        document.getElementById('summaryContainer').style.display = 'none';
+        document.getElementById('downloadPDFButton').style.display = 'none';
+        document.getElementById('employeeSelect').value = '';
+        choreCount = 1;
+        choresData.length = 0; // Clear the chores data array
+        document.getElementById('choresContainer').innerHTML = `
+            <div class="chore-group" id="chore1">
+                <label for="client1">Client :</label>
+                <input type="text" id="client1" placeholder="Nom du client" required>
+                <label for="address1">Adresse du chantier :</label>
+                <input type="text" id="address1" placeholder="Adresse du chantier" required>
+                <label for="devis1">Devis (4 chiffres) :</label>
+                <input type="text" id="devis1" placeholder="Ex: 1234" required>
+                <label for="jobFinished1">Chantier terminé :</label>
+                <select id="jobFinished1" required>
+                    <option value="Non">Non</option>
+                    <option value="Oui">Oui</option>
+                </select>
+            </div>
+        `;
+    }
+
+    // Fonction pour générer le PDF
+    document.getElementById('downloadPDFButton').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.text('Fiche de Chantier - AZ Marquage', 20, 20);
+        doc.setFontSize(12);
+
+        let yOffset = 30; // Starting y position
+
+        doc.text(`Employé : ${document.getElementById('employeeSelect').value}`, 20, yOffset);
+        yOffset += 10;
+        doc.text(`Date : ${document.getElementById('date').value}`, 20, yOffset);
+        yOffset += 10;
+
+        choresData.forEach((chore, index) => {
+            doc.text(`Chantier ${index + 1}:`, 20, yOffset);
+            yOffset += 10;
+            doc.text(`Client : ${chore.client}`, 20, yOffset);
+            yOffset += 10;
+            doc.text(`Adresse : ${chore.address}`, 20, yOffset);
+            yOffset += 10;
+            doc.text(`Devis : ${chore.devis}`, 20, yOffset);
+            yOffset += 10;
+            doc.text(`Chantier terminé : ${chore.jobFinished}`, 20, yOffset);
+            yOffset += 10;
+        });
+
+        doc.text(`Second : ${document.getElementById('secondSelect').value}`, 20, yOffset);
+        yOffset += 10;
+        doc.text(`Deuxième Second : ${document.getElementById('second2').value || 'Non précisé'}`, 20, yOffset);
+        yOffset += 10;
+        doc.text(`Heure d'arrivée : ${document.getElementById('arrivalTime').value}`, 20, yOffset);
+        yOffset += 10;
+        doc.text(`Heure de départ : ${document.getElementById('departureTime').value}`, 20, yOffset);
+        yOffset += 10;
+        doc.text(`Temps de pause : ${document.getElementById('breakTime').value}`, 20, yOffset);
+
+        doc.save('fiche_chantier_az_marquage.pdf');
+    });
+</script>
+
+</body>
+</html>

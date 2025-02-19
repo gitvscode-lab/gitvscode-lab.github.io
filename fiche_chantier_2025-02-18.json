@@ -1,0 +1,12 @@
+{
+  "employee": "Zehar",
+  "date": "2025-02-18",
+  "chores": [
+    {
+      "client": "Sanofi",
+      "address": "Lyon",
+      "devis": "49835",
+      "jobFinished": "Oui"
+    }
+  ]
+}
